@@ -178,3 +178,31 @@ contract EtherWallet {
         return address(this).balance;
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract SimplePoll {
+    string public question;
+    uint256 public optionA;
+    uint256 public optionB;
+    mapping(address => bool) public hasVoted;
+
+    event Voted(address indexed voter, bool choseA);
+
+    constructor(string memory _question) {
+        question = _question;
+    }
+
+    function vote(bool chooseA) external {
+        require(!hasVoted[msg.sender], "Already voted");
+        hasVoted[msg.sender] = true;
+
+        if (chooseA) {
+            optionA += 1;
+        } else {
+            optionB += 1;
+        }
+
+        emit Voted(msg.sender, chooseA);
+    }
+}
