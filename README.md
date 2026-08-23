@@ -113,3 +113,39 @@ contract ArrayStore {
         return numbers[index];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract AccessControl {
+    address public admin;
+    mapping(address => bool) public moderators;
+
+    event AdminChanged(address indexed newAdmin);
+    event ModeratorAdded(address indexed account);
+    event ModeratorRemoved(address indexed account);
+
+    constructor() {
+        admin = msg.sender;
+    }
+
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "Not admin");
+        _;
+    }
+
+    function changeAdmin(address newAdmin) external onlyAdmin {
+        require(newAdmin != address(0), "Invalid address");
+        admin = newAdmin;
+        emit AdminChanged(newAdmin);
+    }
+
+    function addModerator(address account) external onlyAdmin {
+        moderators[account] = true;
+        emit ModeratorAdded(account);
+    }
+
+    function removeModerator(address account) external onlyAdmin {
+        moderators[account] = false;
+        emit ModeratorRemoved(account);
+    }
+}
