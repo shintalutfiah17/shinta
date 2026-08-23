@@ -91,3 +91,25 @@ contract SimpleBank {
         emit Withdrawn(msg.sender, amount);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract ArrayStore {
+    uint256[] public numbers;
+
+    event NumberAdded(uint256 number, uint256 index);
+
+    function addNumber(uint256 number) external {
+        numbers.push(number);
+        emit NumberAdded(number, numbers.length - 1);
+    }
+
+    function getLength() external view returns (uint256) {
+        return numbers.length;
+    }
+
+    function getNumber(uint256 index) external view returns (uint256) {
+        require(index < numbers.length, "Index out of bounds");
+        return numbers[index];
+    }
+}
