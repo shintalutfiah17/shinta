@@ -6,3 +6,9 @@
 - Ayuda a nuevos builders a dar sus primeros pasos
 
 Toda contribución suma.
+
+# Base Guild Resources
+
+Listado curado de recursos y herramientas útiles para el Guild de Base.
+
+Base es una L2 orientada a la adopción masiva. Este repositorio centraliza links, documentación y utilidades del ecosistema.
