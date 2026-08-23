@@ -206,3 +206,29 @@ contract SimplePoll {
         emit Voted(msg.sender, chooseA);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract FeeCollector {
+    address public owner;
+    uint256 public totalCollected;
+
+    event FeeReceived(address indexed from, uint256 amount);
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function payFee() external payable {
+        require(msg.value > 0, "Must send ETH");
+        totalCollected += msg.value;
+        emit FeeReceived(msg.sender, msg.value);
+    }
+
+    function withdraw() external {
+        require(msg.sender == owner, "Not owner");
+        uint256 amount = address(this).balance;
+        (bool success, ) = owner.call{value: amount}("");
+        require(success, "Withdraw failed");
+    }
+}
