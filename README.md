@@ -149,3 +149,32 @@ contract AccessControl {
         emit ModeratorRemoved(account);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract EtherWallet {
+    address payable public owner;
+
+    event Deposited(address indexed from, uint256 amount);
+    event Withdrawn(address indexed to, uint256 amount);
+
+    constructor() {
+        owner = payable(msg.sender);
+    }
+
+    receive() external payable {
+        emit Deposited(msg.sender, msg.value);
+    }
+
+    function withdraw(uint256 amount) external {
+        require(msg.sender == owner, "Not owner");
+        require(address(this).balance >= amount, "Insufficient balance");
+        (bool success, ) = owner.call{value: amount}("");
+        require(success, "Withdraw failed");
+        emit Withdrawn(owner, amount);
+    }
+
+    function getBalance() external view returns (uint256) {
+        return address(this).balance;
+    }
+}
