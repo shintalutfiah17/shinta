@@ -42,3 +42,29 @@ contract HelloBase {
         return greeting;
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract TipJar {
+    address public owner;
+    uint256 public totalTips;
+
+    event Tipped(address indexed from, uint256 amount);
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function tip() external payable {
+        require(msg.value > 0, "Must send ETH");
+        totalTips += msg.value;
+        emit Tipped(msg.sender, msg.value);
+    }
+
+    function withdraw() external {
+        require(msg.sender == owner, "Not owner");
+        uint256 amount = address(this).balance;
+        (bool success, ) = owner.call{value: amount}("");
+        require(success, "Withdraw failed");
+    }
+}
