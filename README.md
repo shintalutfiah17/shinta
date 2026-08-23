@@ -232,3 +232,24 @@ contract FeeCollector {
         require(success, "Withdraw failed");
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract Echo {
+    string public lastMessage;
+    address public lastSender;
+    uint256 public messageCount;
+
+    event MessageEchoed(address indexed sender, string message);
+
+    function echo(string calldata message) external {
+        lastMessage = message;
+        lastSender = msg.sender;
+        messageCount += 1;
+        emit MessageEchoed(msg.sender, message);
+    }
+
+    function getLastMessage() external view returns (string memory, address, uint256) {
+        return (lastMessage, lastSender, messageCount);
+    }
+}
