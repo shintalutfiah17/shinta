@@ -22,3 +22,23 @@ Ventajas para developers:
 - Acceso a usuarios reales a través de Coinbase
 
 El objetivo es construir productos que la gente realmente use.
+
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract HelloBase {
+    string public greeting = "Hello Base";
+    address public lastSender;
+
+    event GreetingUpdated(string newGreeting, address indexed by);
+
+    function setGreeting(string calldata newGreeting) external {
+        greeting = newGreeting;
+        lastSender = msg.sender;
+        emit GreetingUpdated(newGreeting, msg.sender);
+    }
+
+    function getGreeting() external view returns (string memory) {
+        return greeting;
+    }
+}
