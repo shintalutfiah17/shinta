@@ -252,4 +252,28 @@ contract Echo {
     function getLastMessage() external view returns (string memory, address, uint256) {
         return (lastMessage, lastSender, messageCount);
     }
+}// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract Inventory {
+    mapping(address => mapping(string => uint256)) public items;
+
+    event ItemAdded(address indexed user, string item, uint256 amount);
+    event ItemRemoved(address indexed user, string item, uint256 amount);
+
+    function addItem(string calldata item, uint256 amount) external {
+        require(amount > 0, "Amount must be > 0");
+        items[msg.sender][item] += amount;
+        emit ItemAdded(msg.sender, item, amount);
+    }
+
+    function removeItem(string calldata item, uint256 amount) external {
+        require(items[msg.sender][item] >= amount, "Not enough items");
+        items[msg.sender][item] -= amount;
+        emit ItemRemoved(msg.sender, item, amount);
+    }
+
+    function getBalance(address user, string calldata item) external view returns (uint256) {
+        return items[user][item];
+    }
 }
