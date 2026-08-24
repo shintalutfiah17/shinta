@@ -298,3 +298,30 @@ contract CounterMap {
         emit CounterIncremented(key, 0);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract MultiCounter {
+    uint256 public counterA;
+    uint256 public counterB;
+    uint256 public counterC;
+
+    event CounterAIncremented(uint256 newValue);
+    event CounterBIncremented(uint256 newValue);
+    event CounterCIncremented(uint256 newValue);
+
+    function incrementA() external {
+        counterA += 1;
+        emit CounterAIncremented(counterA);
+    }
+
+    function incrementB() external {
+        counterB += 1;
+        emit CounterBIncremented(counterB);
+    }
+
+    function incrementC() external {
+        counterC += 1;
+        emit CounterCIncremented(counterC);
+    }
+}
