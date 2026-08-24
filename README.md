@@ -276,4 +276,25 @@ contract Inventory {
     function getBalance(address user, string calldata item) external view returns (uint256) {
         return items[user][item];
     }
+}// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract CounterMap {
+    mapping(string => uint256) public counters;
+
+    event CounterIncremented(string key, uint256 newValue);
+
+    function increment(string calldata key) external {
+        counters[key] += 1;
+        emit CounterIncremented(key, counters[key]);
+    }
+
+    function get(string calldata key) external view returns (uint256) {
+        return counters[key];
+    }
+
+    function reset(string calldata key) external {
+        counters[key] = 0;
+        emit CounterIncremented(key, 0);
+    }
 }
