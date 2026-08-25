@@ -393,3 +393,32 @@ contract Status {
         emit StateChanged(State.Inactive, msg.sender);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract TaskManager {
+    struct Task {
+        string description;
+        bool completed;
+    }
+
+    mapping(address => Task[]) public tasks;
+
+    event TaskCreated(address indexed user, uint256 index, string description);
+    event TaskCompleted(address indexed user, uint256 index);
+
+    function createTask(string calldata description) external {
+        tasks[msg.sender].push(Task(description, false));
+        emit TaskCreated(msg.sender, tasks[msg.sender].length - 1, description);
+    }
+
+    function completeTask(uint256 index) external {
+        require(index < tasks[msg.sender].length, "Invalid index");
+        tasks[msg.sender][index].completed = true;
+        emit TaskCompleted(msg.sender, index);
+    }
+
+    function getTaskCount(address user) external view returns (uint256) {
+        return tasks[user].length;
+    }
+}
