@@ -420,5 +420,37 @@ contract TaskManager {
 
     function getTaskCount(address user) external view returns (uint256) {
         return tasks[user].length;
+    }// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract SimpleAuth {
+    mapping(address => bool) public authorized;
+    address public admin;
+
+    event Authorized(address indexed user);
+    event Revoked(address indexed user);
+
+    constructor() {
+        admin = msg.sender;
+        authorized[msg.sender] = true;
+    }
+
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "Not admin");
+        _;
+    }
+
+    function authorize(address user) external onlyAdmin {
+        authorized[user] = true;
+        emit Authorized(user);
+    }
+
+    function revoke(address user) external onlyAdmin {
+        authorized[user] = false;
+        emit Revoked(user);
+    }
+
+    function isAuthorized(address user) external view returns (bool) {
+        return authorized[user];
     }
 }
