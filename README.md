@@ -454,3 +454,28 @@ contract SimpleAuth {
         return authorized[user];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract NumberGuess {
+    uint256 private secretNumber;
+    address public owner;
+
+    event Guessed(address indexed player, uint256 guess, bool correct);
+
+    constructor(uint256 _secretNumber) {
+        owner = msg.sender;
+        secretNumber = _secretNumber;
+    }
+
+    function guess(uint256 number) external returns (bool) {
+        bool correct = (number == secretNumber);
+        emit Guessed(msg.sender, number, correct);
+        return correct;
+    }
+
+    function setSecret(uint256 newSecret) external {
+        require(msg.sender == owner, "Not owner");
+        secretNumber = newSecret;
+    }
+}
