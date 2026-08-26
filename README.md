@@ -541,3 +541,30 @@ contract BidTracker {
         require(success, "Transfer failed");
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract VoteTwoOptions {
+    uint256 public votesFor;
+    uint256 public votesAgainst;
+    mapping(address => bool) public hasVoted;
+
+    event Voted(address indexed voter, bool support);
+
+    function vote(bool support) external {
+        require(!hasVoted[msg.sender], "Already voted");
+        hasVoted[msg.sender] = true;
+
+        if (support) {
+            votesFor += 1;
+        } else {
+            votesAgainst += 1;
+        }
+
+        emit Voted(msg.sender, support);
+    }
+
+    function getResults() external view returns (uint256 forVotes, uint256 againstVotes) {
+        return (votesFor, votesAgainst);
+    }
+}
