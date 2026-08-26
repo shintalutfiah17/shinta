@@ -511,4 +511,33 @@ contract AccessList {
     function isAllowed(address user) external view returns (bool) {
         return allowed[user];
     }
+}// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract BidTracker {
+    address public highestBidder;
+    uint256 public highestBid;
+    mapping(address => uint256) public bids;
+
+    event NewBid(address indexed bidder, uint256 amount);
+
+    function placeBid() external payable {
+        require(msg.value > highestBid, "Bid too low");
+
+        if (highestBidder != address(0)) {
+            bids[highestBidder] += highestBid;
+        }
+
+        highestBidder = msg.sender;
+        highestBid = msg.value;
+        emit NewBid(msg.sender, msg.value);
+    }
+
+    function withdraw() external {
+        uint256 amount = bids[msg.sender];
+        require(amount > 0, "No funds");
+        bids[msg.sender] = 0;
+        (bool success, ) = msg.sender.call{value: amount}("");
+        require(success, "Transfer failed");
+    }
 }
