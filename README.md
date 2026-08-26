@@ -478,4 +478,37 @@ contract NumberGuess {
         require(msg.sender == owner, "Not owner");
         secretNumber = newSecret;
     }
+}// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract AccessList {
+    address public owner;
+    mapping(address => bool) public allowed;
+
+    event AccessGranted(address indexed user);
+    event AccessRevoked(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+        allowed[msg.sender] = true;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
+
+    function grant(address user) external onlyOwner {
+        allowed[user] = true;
+        emit AccessGranted(user);
+    }
+
+    function revoke(address user) external onlyOwner {
+        allowed[user] = false;
+        emit AccessRevoked(user);
+    }
+
+    function isAllowed(address user) external view returns (bool) {
+        return allowed[user];
+    }
 }
