@@ -615,3 +615,26 @@ contract CallCounter {
         return (callsByUser[user], totalCalls);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract BoolStore {
+    mapping(string => bool) public flags;
+    address public owner;
+
+    event FlagSet(string key, bool value);
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function setFlag(string calldata key, bool value) external {
+        require(msg.sender == owner, "Not owner");
+        flags[key] = value;
+        emit FlagSet(key, value);
+    }
+
+    function getFlag(string calldata key) external view returns (bool) {
+        return flags[key];
+    }
+}
