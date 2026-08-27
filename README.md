@@ -568,3 +568,31 @@ contract VoteTwoOptions {
         return (votesFor, votesAgainst);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract NameTag {
+    mapping(address => string) public tags;
+    mapping(string => address) public tagOwner;
+
+    event TagClaimed(address indexed user, string tag);
+    event TagReleased(address indexed user, string tag);
+
+    function claimTag(string calldata tag) external {
+        require(bytes(tag).length > 0, "Empty tag");
+        require(tagOwner[tag] == address(0), "Tag already taken");
+        require(bytes(tags[msg.sender]).length == 0, "Already has a tag");
+
+        tags[msg.sender] = tag;
+        tagOwner[tag] = msg.sender;
+        emit TagClaimed(msg.sender, tag);
+    }
+
+    function releaseTag() external {
+        string memory tag = tags[msg.sender];
+        require(bytes(tag).length > 0, "No tag");
+        delete tagOwner[tag];
+        delete tags[msg.sender];
+        emit TagReleased(msg.sender, tag);
+    }
+}
