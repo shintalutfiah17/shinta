@@ -596,3 +596,22 @@ contract NameTag {
         emit TagReleased(msg.sender, tag);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract CallCounter {
+    uint256 public totalCalls;
+    mapping(address => uint256) public callsByUser;
+
+    event Called(address indexed user, uint256 userCalls, uint256 total);
+
+    function call() external {
+        totalCalls += 1;
+        callsByUser[msg.sender] += 1;
+        emit Called(msg.sender, callsByUser[msg.sender], totalCalls);
+    }
+
+    function getStats(address user) external view returns (uint256 userCalls, uint256 total) {
+        return (callsByUser[user], totalCalls);
+    }
+}
