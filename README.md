@@ -638,3 +638,42 @@ contract BoolStore {
         return flags[key];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract MultiOwnable {
+    mapping(address => bool) public isOwner;
+    address[] public owners;
+
+    event OwnerAdded(address indexed newOwner);
+    event OwnerRemoved(address indexed oldOwner);
+
+    constructor() {
+        isOwner[msg.sender] = true;
+        owners.push(msg.sender);
+    }
+
+    modifier onlyOwner() {
+        require(isOwner[msg.sender], "Not owner");
+        _;
+    }
+
+    function addOwner(address newOwner) external onlyOwner {
+        require(!isOwner[newOwner], "Already owner");
+        require(newOwner != address(0), "Invalid address");
+        isOwner[newOwner] = true;
+        owners.push(newOwner);
+        emit OwnerAdded(newOwner);
+    }
+
+    function removeOwner(address oldOwner) external onlyOwner {
+        require(isOwner[oldOwner], "Not an owner");
+        require(owners.length > 1, "Cannot remove last owner");
+        isOwner[oldOwner] = false;
+        emit OwnerRemoved(oldOwner);
+    }
+
+    function getOwners() external view returns (address[] memory) {
+        return owners;
+    }
+}
