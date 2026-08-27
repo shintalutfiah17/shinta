@@ -676,4 +676,34 @@ contract MultiOwnable {
     function getOwners() external view returns (address[] memory) {
         return owners;
     }
+}// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract ReferralCode {
+    mapping(address => string) public codes;
+    mapping(string => address) public codeOwner;
+    mapping(address => address) public referredBy;
+
+    event CodeCreated(address indexed user, string code);
+    event Referred(address indexed user, address indexed referrer);
+
+    function createCode(string calldata code) external {
+        require(bytes(code).length > 0, "Empty code");
+        require(codeOwner[code] == address(0), "Code taken");
+        require(bytes(codes[msg.sender]).length == 0, "Already has code");
+
+        codes[msg.sender] = code;
+        codeOwner[code] = msg.sender;
+        emit CodeCreated(msg.sender, code);
+    }
+
+    function useCode(string calldata code) external {
+        address referrer = codeOwner[code];
+        require(referrer != address(0), "Invalid code");
+        require(referrer != msg.sender, "Cannot refer yourself");
+        require(referredBy[msg.sender] == address(0), "Already referred");
+
+        referredBy[msg.sender] = referrer;
+        emit Referred(msg.sender, referrer);
+    }
 }
