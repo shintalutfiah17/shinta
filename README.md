@@ -737,3 +737,33 @@ contract RoleBadge {
         return badge[user];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract WhitelistMint {
+    address public owner;
+    mapping(address => bool) public whitelist;
+    mapping(address => bool) public hasMinted;
+    uint256 public totalMinted;
+
+    event Whitelisted(address indexed user);
+    event Minted(address indexed user, uint256 total);
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function addToWhitelist(address user) external {
+        require(msg.sender == owner, "Not owner");
+        whitelist[user] = true;
+        emit Whitelisted(user);
+    }
+
+    function mint() external {
+        require(whitelist[msg.sender], "Not whitelisted");
+        require(!hasMinted[msg.sender], "Already minted");
+        hasMinted[msg.sender] = true;
+        totalMinted += 1;
+        emit Minted(msg.sender, totalMinted);
+    }
+}
