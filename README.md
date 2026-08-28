@@ -707,3 +707,33 @@ contract ReferralCode {
         emit Referred(msg.sender, referrer);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract RoleBadge {
+    mapping(address => string) public badge;
+    address public admin;
+
+    event BadgeAssigned(address indexed user, string role);
+    event BadgeRemoved(address indexed user);
+
+    constructor() {
+        admin = msg.sender;
+    }
+
+    function assignBadge(address user, string calldata role) external {
+        require(msg.sender == admin, "Not admin");
+        badge[user] = role;
+        emit BadgeAssigned(user, role);
+    }
+
+    function removeBadge(address user) external {
+        require(msg.sender == admin, "Not admin");
+        delete badge[user];
+        emit BadgeRemoved(user);
+    }
+
+    function getBadge(address user) external view returns (string memory) {
+        return badge[user];
+    }
+}
