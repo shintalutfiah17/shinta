@@ -767,3 +767,24 @@ contract WhitelistMint {
         emit Minted(msg.sender, totalMinted);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract TagList {
+    mapping(address => string[]) public tags;
+
+    event TagAdded(address indexed user, string tag);
+
+    function addTag(string calldata tag) external {
+        tags[msg.sender].push(tag);
+        emit TagAdded(msg.sender, tag);
+    }
+
+    function getTags(address user) external view returns (string[] memory) {
+        return tags[user];
+    }
+
+    function getTagCount(address user) external view returns (uint256) {
+        return tags[user].length;
+    }
+}
