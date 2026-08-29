@@ -994,3 +994,37 @@ contract KeyFlag {
         emit FlagSet(key, flags[key]);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract RoleFlag {
+    mapping(address => bool) public isModerator;
+    mapping(address => bool) public isMember;
+    address public admin;
+
+    event RoleGranted(address indexed user, string role);
+    event RoleRevoked(address indexed user, string role);
+
+    constructor() {
+        admin = msg.sender;
+        isMember[msg.sender] = true;
+    }
+
+    function grantModerator(address user) external {
+        require(msg.sender == admin, "Not admin");
+        isModerator[user] = true;
+        emit RoleGranted(user, "moderator");
+    }
+
+    function grantMember(address user) external {
+        require(msg.sender == admin || isModerator[msg.sender], "Not authorized");
+        isMember[user] = true;
+        emit RoleGranted(user, "member");
+    }
+
+    function revokeMember(address user) external {
+        require(msg.sender == admin, "Not admin");
+        isMember[user] = false;
+        emit RoleRevoked(user, "member");
+    }
+}
