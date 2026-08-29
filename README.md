@@ -861,3 +861,22 @@ contract PauseGuard {
         emit Action(msg.sender, actionCount);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract RateLimit {
+    mapping(address => uint256) public lastCall;
+    uint256 public minInterval = 30 seconds;
+
+    event Called(address indexed user, uint256 timestamp);
+
+    function call() external {
+        require(block.timestamp >= lastCall[msg.sender] + minInterval, "Rate limited");
+        lastCall[msg.sender] = block.timestamp;
+        emit Called(msg.sender, block.timestamp);
+    }
+
+    function canCall(address user) external view returns (bool) {
+        return block.timestamp >= lastCall[user] + minInterval;
+    }
+}
