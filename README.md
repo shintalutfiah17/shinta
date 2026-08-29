@@ -909,3 +909,28 @@ contract AccessToken {
         emit AccessRevoked(user);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract FlagBoard {
+    mapping(string => bool) public flags;
+    mapping(string => address) public flagSetter;
+
+    event FlagToggled(string key, bool value, address indexed by);
+
+    function toggleFlag(string calldata key) external {
+        flags[key] = !flags[key];
+        flagSetter[key] = msg.sender;
+        emit FlagToggled(key, flags[key], msg.sender);
+    }
+
+    function setFlag(string calldata key, bool value) external {
+        flags[key] = value;
+        flagSetter[key] = msg.sender;
+        emit FlagToggled(key, value, msg.sender);
+    }
+
+    function getFlag(string calldata key) external view returns (bool, address) {
+        return (flags[key], flagSetter[key]);
+    }
+}
