@@ -934,3 +934,34 @@ contract FlagBoard {
         return (flags[key], flagSetter[key]);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract InviteOnly {
+    address public owner;
+    mapping(address => bool) public invited;
+    mapping(address => bool) public joined;
+    uint256 public memberCount;
+
+    event Invited(address indexed user);
+    event Joined(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+        invited[msg.sender] = true;
+    }
+
+    function invite(address user) external {
+        require(msg.sender == owner || joined[msg.sender], "Not authorized");
+        invited[user] = true;
+        emit Invited(user);
+    }
+
+    function join() external {
+        require(invited[msg.sender], "Not invited");
+        require(!joined[msg.sender], "Already joined");
+        joined[msg.sender] = true;
+        memberCount += 1;
+        emit Joined(msg.sender);
+    }
+}
