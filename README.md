@@ -965,3 +965,32 @@ contract InviteOnly {
         emit Joined(msg.sender);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract KeyFlag {
+    mapping(bytes32 => bool) public flags;
+    address public owner;
+
+    event FlagSet(bytes32 indexed key, bool value);
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function setFlag(bytes32 key, bool value) external {
+        require(msg.sender == owner, "Not owner");
+        flags[key] = value;
+        emit FlagSet(key, value);
+    }
+
+    function getFlag(bytes32 key) external view returns (bool) {
+        return flags[key];
+    }
+
+    function toggleFlag(bytes32 key) external {
+        require(msg.sender == owner, "Not owner");
+        flags[key] = !flags[key];
+        emit FlagSet(key, flags[key]);
+    }
+}
