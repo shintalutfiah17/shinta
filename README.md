@@ -820,3 +820,44 @@ contract TwoStepOwnable {
         pendingOwner = address(0);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract PauseGuard {
+    address public owner;
+    bool public paused;
+    uint256 public actionCount;
+
+    event Paused(address indexed by);
+    event Unpaused(address indexed by);
+    event Action(address indexed by, uint256 count);
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
+
+    modifier whenNotPaused() {
+        require(!paused, "Paused");
+        _;
+    }
+
+    function pause() external onlyOwner {
+        paused = true;
+        emit Paused(msg.sender);
+    }
+
+    function unpause() external onlyOwner {
+        paused = false;
+        emit Unpaused(msg.sender);
+    }
+
+    function doAction() external whenNotPaused {
+        actionCount += 1;
+        emit Action(msg.sender, actionCount);
+    }
+}
