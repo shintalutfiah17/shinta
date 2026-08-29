@@ -880,3 +880,32 @@ contract RateLimit {
         return block.timestamp >= lastCall[user] + minInterval;
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract AccessToken {
+    mapping(address => bool) public hasAccess;
+    address public issuer;
+    uint256 public totalIssued;
+
+    event AccessGranted(address indexed user);
+    event AccessRevoked(address indexed user);
+
+    constructor() {
+        issuer = msg.sender;
+    }
+
+    function grantAccess(address user) external {
+        require(msg.sender == issuer, "Not issuer");
+        require(!hasAccess[user], "Already has access");
+        hasAccess[user] = true;
+        totalIssued += 1;
+        emit AccessGranted(user);
+    }
+
+    function revokeAccess(address user) external {
+        require(msg.sender == issuer, "Not issuer");
+        hasAccess[user] = false;
+        emit AccessRevoked(user);
+    }
+}
