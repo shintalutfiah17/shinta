@@ -1093,3 +1093,34 @@ contract MemberRegistry {
         emit MemberRemoved(member);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract AccessKey {
+    mapping(address => bool) public hasKey;
+    address public issuer;
+    uint256 public keysIssued;
+
+    event KeyIssued(address indexed user);
+    event KeyRevoked(address indexed user);
+
+    constructor() {
+        issuer = msg.sender;
+        hasKey[msg.sender] = true;
+        keysIssued = 1;
+    }
+
+    function issueKey(address user) external {
+        require(msg.sender == issuer, "Not issuer");
+        require(!hasKey[user], "Already has key");
+        hasKey[user] = true;
+        keysIssued += 1;
+        emit KeyIssued(user);
+    }
+
+    function revokeKey(address user) external {
+        require(msg.sender == issuer, "Not issuer");
+        hasKey[user] = false;
+        emit KeyRevoked(user);
+    }
+}
