@@ -1194,3 +1194,34 @@ contract Gate {
         return open || allowed[user];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract Permit {
+    address public owner;
+    mapping(address => bool) public permitted;
+
+    event Permitted(address indexed user);
+    event Revoked(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+        permitted[msg.sender] = true;
+    }
+
+    function permit(address user) external {
+        require(msg.sender == owner, "Not owner");
+        permitted[user] = true;
+        emit Permitted(user);
+    }
+
+    function revoke(address user) external {
+        require(msg.sender == owner, "Not owner");
+        permitted[user] = false;
+        emit Revoked(user);
+    }
+
+    function isPermitted(address user) external view returns (bool) {
+        return permitted[user];
+    }
+}
