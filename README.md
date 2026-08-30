@@ -1124,3 +1124,34 @@ contract AccessKey {
         emit KeyRevoked(user);
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract WhitelistSimple {
+    address public owner;
+    mapping(address => bool) public whitelisted;
+    uint256 public count;
+
+    event Added(address indexed user);
+    event Removed(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function add(address user) external {
+        require(msg.sender == owner, "Not owner");
+        require(!whitelisted[user], "Already whitelisted");
+        whitelisted[user] = true;
+        count += 1;
+        emit Added(user);
+    }
+
+    function remove(address user) external {
+        require(msg.sender == owner, "Not owner");
+        require(whitelisted[user], "Not whitelisted");
+        whitelisted[user] = false;
+        count -= 1;
+        emit Removed(user);
+    }
+}
