@@ -1255,3 +1255,42 @@ contract Seal {
         return sealed[user];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract LockFlag {
+    address public owner;
+    bool public locked;
+    mapping(address => bool) public exceptions;
+
+    event Locked(address indexed by);
+    event Unlocked(address indexed by);
+    event ExceptionGranted(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+        locked = false;
+    }
+
+    function lock() external {
+        require(msg.sender == owner, "Not owner");
+        locked = true;
+        emit Locked(msg.sender);
+    }
+
+    function unlock() external {
+        require(msg.sender == owner, "Not owner");
+        locked = false;
+        emit Unlocked(msg.sender);
+    }
+
+    function grantException(address user) external {
+        require(msg.sender == owner, "Not owner");
+        exceptions[user] = true;
+        emit ExceptionGranted(user);
+    }
+
+    function canAct(address user) external view returns (bool) {
+        return !locked || exceptions[user];
+    }
+}
