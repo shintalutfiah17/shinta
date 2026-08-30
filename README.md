@@ -1028,3 +1028,36 @@ contract RoleFlag {
         emit RoleRevoked(user, "member");
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract Blacklist {
+    address public owner;
+    mapping(address => bool) public isBlacklisted;
+
+    event Blacklisted(address indexed user);
+    event Unblacklisted(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
+
+    function blacklist(address user) external onlyOwner {
+        isBlacklisted[user] = true;
+        emit Blacklisted(user);
+    }
+
+    function unblacklist(address user) external onlyOwner {
+        isBlacklisted[user] = false;
+        emit Unblacklisted(user);
+    }
+
+    function check(address user) external view returns (bool) {
+        return isBlacklisted[user];
+    }
+}
