@@ -1664,3 +1664,34 @@ contract KeyPass {
         return hasKey[user];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract TokenGate {
+    address public owner;
+    mapping(address => bool) public hasToken;
+
+    event TokenGranted(address indexed user);
+    event TokenRevoked(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+        hasToken[msg.sender] = true;
+    }
+
+    function grantToken(address user) external {
+        require(msg.sender == owner, "Not owner");
+        hasToken[user] = true;
+        emit TokenGranted(user);
+    }
+
+    function revokeToken(address user) external {
+        require(msg.sender == owner, "Not owner");
+        hasToken[user] = false;
+        emit TokenRevoked(user);
+    }
+
+    function checkToken(address user) external view returns (bool) {
+        return hasToken[user];
+    }
+}
