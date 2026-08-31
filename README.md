@@ -1448,4 +1448,34 @@ contract PermitList {
     function isPermitted(address user) external view returns (bool) {
         return permitted[user];
     }
+}// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract Grant {
+    address public owner;
+    mapping(address => bool) public granted;
+
+    event Granted(address indexed user);
+    event Revoked(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+        granted[msg.sender] = true;
+    }
+
+    function grant(address user) external {
+        require(msg.sender == owner, "Not owner");
+        granted[user] = true;
+        emit Granted(user);
+    }
+
+    function revoke(address user) external {
+        require(msg.sender == owner, "Not owner");
+        granted[user] = false;
+        emit Revoked(user);
+    }
+
+    function isGranted(address user) external view returns (bool) {
+        return granted[user];
+    }
 }
