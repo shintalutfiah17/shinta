@@ -1325,3 +1325,34 @@ contract Pass {
         return hasPass[user];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract Ticket {
+    address public owner;
+    mapping(address => bool) public hasTicket;
+    uint256 public totalTickets;
+
+    event TicketIssued(address indexed user);
+    event TicketRevoked(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+        hasTicket[msg.sender] = true;
+        totalTickets = 1;
+    }
+
+    function issueTicket(address user) external {
+        require(msg.sender == owner, "Not owner");
+        require(!hasTicket[user], "Already has ticket");
+        hasTicket[user] = true;
+        totalTickets += 1;
+        emit TicketIssued(user);
+    }
+
+    function revokeTicket(address user) external {
+        require(msg.sender == owner, "Not owner");
+        hasTicket[user] = false;
+        emit TicketRevoked(user);
+    }
+}
