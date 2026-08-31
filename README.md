@@ -1510,3 +1510,34 @@ contract PermitGate {
         return permitted[user];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract Entry {
+    address public owner;
+    mapping(address => bool) public canEnter;
+
+    event EntryGranted(address indexed user);
+    event EntryRevoked(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+        canEnter[msg.sender] = true;
+    }
+
+    function grantEntry(address user) external {
+        require(msg.sender == owner, "Not owner");
+        canEnter[user] = true;
+        emit EntryGranted(user);
+    }
+
+    function revokeEntry(address user) external {
+        require(msg.sender == owner, "Not owner");
+        canEnter[user] = false;
+        emit EntryRevoked(user);
+    }
+
+    function checkEntry(address user) external view returns (bool) {
+        return canEnter[user];
+    }
+}
