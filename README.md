@@ -1294,3 +1294,34 @@ contract LockFlag {
         return !locked || exceptions[user];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract Pass {
+    address public owner;
+    mapping(address => bool) public hasPass;
+
+    event PassGiven(address indexed user);
+    event PassTaken(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+        hasPass[msg.sender] = true;
+    }
+
+    function givePass(address user) external {
+        require(msg.sender == owner, "Not owner");
+        hasPass[user] = true;
+        emit PassGiven(user);
+    }
+
+    function takePass(address user) external {
+        require(msg.sender == owner, "Not owner");
+        hasPass[user] = false;
+        emit PassTaken(user);
+    }
+
+    function checkPass(address user) external view returns (bool) {
+        return hasPass[user];
+    }
+}
