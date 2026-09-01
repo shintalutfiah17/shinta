@@ -1850,3 +1850,34 @@ contract BadgeKey {
         return hasBadge[user];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract Keycard {
+    address public owner;
+    mapping(address => bool) public hasKeycard;
+
+    event KeycardGranted(address indexed user);
+    event KeycardRevoked(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+        hasKeycard[msg.sender] = true;
+    }
+
+    function grantKeycard(address user) external {
+        require(msg.sender == owner, "Not owner");
+        hasKeycard[user] = true;
+        emit KeycardGranted(user);
+    }
+
+    function revokeKeycard(address user) external {
+        require(msg.sender == owner, "Not owner");
+        hasKeycard[user] = false;
+        emit KeycardRevoked(user);
+    }
+
+    function checkKeycard(address user) external view returns (bool) {
+        return hasKeycard[user];
+    }
+}
