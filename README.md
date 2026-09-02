@@ -1912,3 +1912,34 @@ contract EntryPass {
         return hasPass[user];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract PermitKey {
+    address public owner;
+    mapping(address => bool) public hasPermit;
+
+    event PermitGranted(address indexed user);
+    event PermitRevoked(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+        hasPermit[msg.sender] = true;
+    }
+
+    function grantPermit(address user) external {
+        require(msg.sender == owner, "Not owner");
+        hasPermit[user] = true;
+        emit PermitGranted(user);
+    }
+
+    function revokePermit(address user) external {
+        require(msg.sender == owner, "Not owner");
+        hasPermit[user] = false;
+        emit PermitRevoked(user);
+    }
+
+    function checkPermit(address user) external view returns (bool) {
+        return hasPermit[user];
+    }
+}
