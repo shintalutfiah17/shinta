@@ -2558,3 +2558,34 @@ contract PermitOne {
         return hasPermit[user];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract ClearOne {
+    address public owner;
+    mapping(address => bool) public hasClearance;
+
+    event ClearanceGranted(address indexed user);
+    event ClearanceRevoked(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+        hasClearance[msg.sender] = true;
+    }
+
+    function grantClearance(address user) external {
+        require(msg.sender == owner, "Not owner");
+        hasClearance[user] = true;
+        emit ClearanceGranted(user);
+    }
+
+    function revokeClearance(address user) external {
+        require(msg.sender == owner, "Not owner");
+        hasClearance[user] = false;
+        emit ClearanceRevoked(user);
+    }
+
+    function checkClearance(address user) external view returns (bool) {
+        return hasClearance[user];
+    }
+}
