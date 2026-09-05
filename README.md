@@ -2837,3 +2837,34 @@ contract VisaTwo {
         return hasVisa[user];
     }
 }
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract PassTwo {
+    address public owner;
+    mapping(address => bool) public hasPass;
+
+    event PassGranted(address indexed user);
+    event PassRevoked(address indexed user);
+
+    constructor() {
+        owner = msg.sender;
+        hasPass[msg.sender] = true;
+    }
+
+    function grantPass(address user) external {
+        require(msg.sender == owner, "Not owner");
+        hasPass[user] = true;
+        emit PassGranted(user);
+    }
+
+    function revokePass(address user) external {
+        require(msg.sender == owner, "Not owner");
+        hasPass[user] = false;
+        emit PassRevoked(user);
+    }
+
+    function checkPass(address user) external view returns (bool) {
+        return hasPass[user];
+    }
+}
